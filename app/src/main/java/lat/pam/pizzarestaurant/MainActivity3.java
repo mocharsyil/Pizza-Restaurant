@@ -3,14 +3,79 @@ package lat.pam.pizzarestaurant;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity3 extends AppCompatActivity {
+    TextView peperoni_description, spaghetti_description, burger_description, steak_description;
+    ProgressDialog loading;
 
     private Toolbar toolbar;
+
+    private void tampilData() {
+        loading = ProgressDialog.show(MainActivity3.this, "Memuat Data", "Mohon Tunggu...");
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://retoolapi.dev/StWODX/uasresto";
+        JSONObject jsonObject = new JSONObject();
+        final String requestBody = jsonObject.toString();
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jo = new JSONArray(response);
+                    Log.d("pepperoni", jo.getJSONObject(0).getString("details"));
+                    String peperoni = jo.getJSONObject(0).getString("details");
+                    peperoni_description.setText(peperoni);
+                    loading.cancel();
+
+                    Log.d("spaghetti", jo.getJSONObject(1).getString("details"));
+                    String spaghetti = jo.getJSONObject(1).getString("details");
+                    spaghetti_description.setText(spaghetti);
+                    loading.cancel();
+
+                    Log.d("burger", jo.getJSONObject(2).getString("details"));
+                    String burger = jo.getJSONObject(2).getString("details");
+                    burger_description.setText(burger);
+                    loading.cancel();
+
+                    Log.d("steak", jo.getJSONObject(3).getString("details"));
+                    String steak = jo.getJSONObject(3).getString("details");
+                    steak_description.setText(steak);
+                    loading.cancel();
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                loading.cancel();
+                Toast.makeText(MainActivity3.this, "Gagal mengambil Rest Api" + error, Toast.LENGTH_SHORT).show();
+            }
+        }
+        );
+        queue.add(stringRequest);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,12 +83,12 @@ public class MainActivity3 extends AppCompatActivity {
         String userName = intent.getStringExtra("userName");
         String city = intent.getStringExtra("city");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main3);
+//        setContentView(R.layout.activity_main3);
 
-        TextView textView = (TextView) findViewById(R.id.user_name);
-        textView.setText(userName);
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        TextView textView = (TextView) findViewById(R.id.user_name);
+//        textView.setText(userName);
+//        toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         View pepperoni = findViewById(R.id.pepperoni);
         pepperoni.setOnClickListener(new View.OnClickListener() {
@@ -80,5 +145,7 @@ public class MainActivity3 extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        tampilData();
     }
 }
