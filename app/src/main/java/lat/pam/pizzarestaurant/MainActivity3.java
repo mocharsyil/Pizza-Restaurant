@@ -79,16 +79,22 @@ public class MainActivity3 extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main3);
+
+        peperoni_description = findViewById(R.id.peperoni_description);
+        spaghetti_description = findViewById(R.id.spaghetti_description);
+        burger_description = findViewById(R.id.burger_description);
+        steak_description = findViewById(R.id.steak_description);
+
         Intent intent = getIntent();
         String userName = intent.getStringExtra("userName");
         String city = intent.getStringExtra("city");
-        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main3);
 
-//        TextView textView = (TextView) findViewById(R.id.user_name);
-//        textView.setText(userName);
-//        toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        TextView textView = (TextView) findViewById(R.id.user_name);
+        textView.setText(userName);
+////        toolbar = findViewById(R.id.toolbar);
+////        setSupportActionBar(toolbar);
 
         View pepperoni = findViewById(R.id.pepperoni);
         pepperoni.setOnClickListener(new View.OnClickListener() {
